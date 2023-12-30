@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-q(gygld69i5h5)lcp7_cf4&r(c_*oj32ai=ebx-q8#=f!i1m2t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1","localhost"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -76,14 +76,21 @@ WSGI_APPLICATION = 'quiz_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME":"quiz_app",
-        "USER":"postgres",
-        "PASSWORD":'@20khush',
-        "HOST":"localhost"
+# DATABASES = {
+#     # "default": {
+#     #     "ENGINE": "django.db.backends.postgresql",
+#     #     "NAME":"quiz_app",
+#     #     "USER":"postgres",
+#     #     "PASSWORD":'@20khush',
+#     #     "HOST":"localhost"
 
+#     }
+# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase', # This is where you put the name of the db file. 
+                 # If one doesn't exist, it will be created at migration time.
     }
 }
 
