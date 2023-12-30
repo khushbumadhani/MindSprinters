@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to BrainBurst Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+  {% include "components/navbar.html" %}
+      <h1 class="display-4 text-center my-5">{{quiz.title}}-({{quiz.question_set.all|length}})</h1>
+      <p class="fs-4 text-center ">{{quiz.description}} </p>
+      <div class="container">
+        <div class="d-flex justify-content-between">
+            <span class="fs-5">{{quiz.created_at}}</span>
+            <span class="fs-5" id="timer">10:00</span>
+        </div>
+        {% for message in messages%}
+        <div id="message-div">
+          <h4 class="text-center text-success ">{{message}}</h4>
+        </div>
+        {% endfor %}
+        <div class="questions my-4">
+          {% for question in quiz.question_set.all %}
+            <div class="card mb-2 question">
+                <div class="card-header fw-bold">
+                  Question {{forloop.counter}}
+                </div>
+                <div class="card-body ">
+                    <p class="card-text">{{question.text}}</p>
+                    {% for option in  question.choice_set.all%}
+                <div class="form-check">
+                    
+                    <label class="form-check-label" for="{{option.id}}">
+                        <input class="form-check-input" value="{{option.text}}" type="radio" name="{{option.question.id}}" id="{{option.id}}">
+                     {{option.text}}
+                    </label>
+                    {%if option.is_correct %}
+                    <span class="visually-hidden correct-answer">{{option.text}}</span>
+                    {% endif%}
+                  </div>
+                  {% endfor %}
+                </div>
+                
+              </div>
+              {% endfor %}
+        </div>
+        
+        <form method="post" action="" id="quiz-form">
+          {%csrf_token%}
+          <input type="hidden" name="score" value="0" id="user-score">
+          <button type="submit" class="btn btn-success" id="submit-button">Submit Quiz</button>
+        </form>
+     
+      </div>
+      {% include "components/footer.html"%}
+      <script>
+        // Elements
+        var submitButton = document.getElementById("submit-button");
+        var timerSpan = document.getElementById("timer");
+        var quizForm = document.getElementById("quiz-form");
+        var questions = document.querySelectorAll(".question");
+        var userScoreInput = document.getElementById("user-score");
+      
+        console.log("Questions found: ", questions.length);
+      
+        var quizDuration = questions.length * 60;
+        console.log("Quiz Duration (seconds): ", quizDuration);
+      
+        // Update timer function
+        function updateTimer() {
+          console.log("Updating timer...");
+      
+          var minutes = Math.floor(quizDuration / 60);
+          var seconds = quizDuration % 60;
+          seconds = seconds < 10 ? '0' + seconds : seconds;
+          timerSpan.innerText = minutes + ":" + seconds;
+      
+          if (quizDuration <= 0) {
+            clearTimeout(quizTimerId);
+            submitQuiz();
+          }
+          else if(document.getElementById("message-div")){
+            clearTimeout(quizTimerId);
+            highlightCorrectAnswers();
+            
+          } 
+          else {
+           
+            quizDuration--;
+          }
+        }
+      
+        // Submit quiz function
+        function submitQuiz() {
+          console.log("Submitting quiz...");
+          // calculate the score
+          calculateScore();
+          quizForm.submit();
+        }
+      
+        // Calculate score function
+        function calculateScore() {
+  console.log("Calculating score...");
+  var score = 0;
+
+  questions.forEach(question => {
+    var selectedInput = question.querySelector('input:checked');
+    var correctAnswerSpan = question.querySelector(".correct-answer");
+
+    // Check if the correct answer span exists
+    if (correctAnswerSpan) {
+      var correctAnswer = correctAnswerSpan.innerText.trim();
+
+      // Check if an option is selected and if it matches the correct answer
+      if (selectedInput && selectedInput.value.trim() === correctAnswer) {
+        score += 1;
+      }
+    } else {
+      console.error("Correct answer span not found for a question.");
+    }
+  });
+
+  userScoreInput.value = score;
+}
+function highlightCorrectAnswers() {
+  questions.forEach(question => {
+    var correctAnswer = question.querySelector('.correct-answer');
+
+    // Check if correctAnswer is not null and if it has a previous element sibling
+    if (correctAnswer && correctAnswer.previousElementSibling) {
+      var inputElement = correctAnswer.previousElementSibling.querySelector("input");
+      
+      // Check if inputElement is not null
+      if (inputElement) {
+        inputElement.classList.add("bg-success");
+        inputElement.classList.add("fw-bold");
+      } else {
+        console.error('Input element not found for correct answer in question');
+      }
+    } else {
+      console.error('Correct answer or previous element sibling not found in question');
+    }
+  });
+
+  submitButton.disabled = true;
+  
+  var options = document.querySelectorAll(".form-check-input");
+  options.forEach(option => {
+    option.disabled = true;
+  });
+}
+
+
+      
+        // Add event listener to submit button
+        if (submitButton) {
+          submitButton.addEventListener("click", submitQuiz);
+        } else {
+          console.error("Submit button not found.");
+        }
+      
+        // Start the timer
+        var quizTimerId = setInterval(updateTimer, 1000);
+        console.log("Timer started");
+      </script>
+      
+
+      
+      
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> -->
+</body>
+</html>

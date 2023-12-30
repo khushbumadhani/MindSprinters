@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to BrainBurst Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+  {% include "components/navbar.html" %}
+      <h1 class="display-4 text-center my-5">Edit Profile</h1>
+      <div class="container">
+        <div class="row">
+            <div class="col">
+              
+            </div>
+            <div class="col">
+              
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <img src="{{user_profile.profile_img.url}}" class="mx-auto d-block"  alt="image" width="150" height="150">
+                    <div class="mb-3">
+                      <label for="exampleInputImage" class="form-label visually-hidden">Profile Image</label>
+                      <input type="file" name="profile_img" class="form-control" id="exampleInputImage" >
+                    </div>
+                    <div class="mb-3">
+                      {% for message in messages%}
+                      <h5 class="text-danger">{{message}}</h5>
+                      {% endfor %}
+                    </div>
+                    <label for="customFile" class="form-label visually-hidden my-">Default file input example</label>
+                    
+                    <div class="mb-3">
+                        <label for="exampleInputEmail2" class="form-label visually-hidden">First Name</label>
+                        <input type="text" name="first_name"value="{{user_profile.user.first_name}}" class="form-control" id="exampleInputEmail2" aria-describedby="emailHelp" placeholder="First Name"  required>
+                        
+                      </div>
+                    <div class="mb-3">
+                      <label for="exampleInputEmail1" class="form-label visually-hidden">Last Name</label>
+                      <input type="text" name="last_name" value="{{user_profile.user.last_name}}" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Last Name"  required>
+                      
+                    </div>
+                    <div class="mb-3">
+                      <label for="exampleInputPassword1" class="form-label visually-hidden">Email</label>
+                      <input type="email" name="Email" value="{{user_profile.user.email}}" class="form-control" id="exampleInputPassword1" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputPassword2" class="form-label visually-hidden">User Name</label>
+                        <input type="text "name="username" value="{{user_profile.user.username}}" class="form-control" id="exampleInputPassword1" placeholder="User Name" required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleInputPassword2" class="form-label visually-hidden">Location</label>
+                        <input type="text" name="location" value="{{user_profile.user.location}}" class="form-control" id="exampleInputPassword1" placeholder="Location" required>
+                      </div>
+                      
+                      <select class="form-select" name="gender" aria-label="Default select example">
+                        <option selected>Select Gender</option>
+                        <option {% if user_profile.gender == 'Male' %}selected{% endif %} value="Male">Male</option>
+                        <option {% if user_profile.gender == 'Female' %}selected{% endif %} value="Female">Female</option>
+                        <option {% if user_profile.gender == 'Other' %}selected{% endif %} value="Other">Other</option>
+                      </select>
+
+                      <div class="form-group my-3">
+                        
+                        <textarea class="form-control" name="bio"  id="paragraphInput" rows="5" placeholder="Your Bio">{{user_profile.bio}}</textarea>
+                      </div>
+                      
+                   
+                    <button type="submit" class="btn btn-success">Save Profile</button>
+                    
+                  </form>
+            </div>
+            <div class="col">
+              
+            </div>
+          </div>
+        </div>
+        
+        {% include "components/footer.html" %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>
